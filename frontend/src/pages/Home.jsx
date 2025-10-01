@@ -26,123 +26,55 @@ const Home = () => {
             <h2 className="text-3xl md:text-4xl font-semibold mb-8 text-blue-100">
               Birthday Wishlist
             </h2>
-            <p className="text-xl md:text-2xl text-blue-100 leading-relaxed max-w-2xl mx-auto">
-              Discover the perfect gifts and help make this birthday celebration truly special!
-            </p>
           </div>
         </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="container mx-auto px-4 -mt-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <Card className="bg-white shadow-xl border-0 hover:shadow-2xl transition-all duration-300">
-            <CardContent className="p-6 text-center">
-              <Package className="w-8 h-8 mx-auto mb-3 text-indigo-600" />
-              <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
-              <div className="text-sm text-gray-600">Total Items</div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white shadow-xl border-0 hover:shadow-2xl transition-all duration-300">
-            <CardContent className="p-6 text-center">
-              <Star className="w-8 h-8 mx-auto mb-3 text-green-600" />
-              <div className="text-2xl font-bold text-gray-900">{stats.purchased}</div>
-              <div className="text-sm text-gray-600">Purchased</div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white shadow-xl border-0 hover:shadow-2xl transition-all duration-300">
-            <CardContent className="p-6 text-center">
-              <Calendar className="w-8 h-8 mx-auto mb-3 text-orange-600" />
-              <div className="text-2xl font-bold text-gray-900">{stats.remaining}</div>
-              <div className="text-sm text-gray-600">Remaining</div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white shadow-xl border-0 hover:shadow-2xl transition-all duration-300">
-            <CardContent className="p-6 text-center">
-              <Gift className="w-8 h-8 mx-auto mb-3 text-purple-600" />
-              <div className="text-2xl font-bold text-gray-900">${stats.totalValue.toFixed(2)}</div>
-              <div className="text-sm text-gray-600">Total Value</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Add Item Section */}
-        <AddWishlistItem 
-          onAddItem={handleAddItem}
-          isOpen={showAddForm}
-          onToggle={() => setShowAddForm(!showAddForm)}
-        />
-
-        {/* Filters Section */}
-        <Card className="mb-8 bg-white shadow-lg border-0">
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row gap-4 items-center">
-              <div className="flex items-center gap-2 text-gray-700">
-                <Filter className="w-5 h-5" />
-                <span className="font-medium">Filter & Search:</span>
-              </div>
-              
-              <div className="flex-1 flex flex-col md:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search wishlist items..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+      {/* Simple Wishlist */}
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
+        <div className="space-y-4">
+          {wishlistItems.map((item) => (
+            <Card key={item.id} className="bg-white shadow-md hover:shadow-lg transition-all duration-200">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-6">
+                  <img 
+                    src={item.image} 
+                    alt={item.title}
+                    className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
                   />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">{item.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2">{item.description}</p>
+                        <div className="flex items-center gap-3">
+                          <Badge variant="outline" className="text-xs">
+                            {item.category}
+                          </Badge>
+                          <Badge className={`text-xs ${priorityColors[item.priority]}`}>
+                            <Star className="w-3 h-3 mr-1" />
+                            {item.priority}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <div className="flex items-center gap-1 font-semibold text-gray-900">
+                          <DollarSign className="w-4 h-4" />
+                          {item.price.toFixed(2)}
+                        </div>
+                        {item.purchased && (
+                          <Badge className="mt-2 bg-green-100 text-green-800 border-green-200">
+                            Purchased
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-full md:w-48">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <Badge variant="outline" className="text-sm">
-                {filteredItems.length} items found
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Wishlist Grid */}
-        {filteredItems.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 pb-12">
-            {filteredItems.map((item) => (
-              <WishlistCard 
-                key={item.id} 
-                item={item} 
-                onTogglePurchased={handleTogglePurchased}
-              />
-            ))}
-          </div>
-        ) : (
-          <Card className="text-center py-16 bg-white shadow-lg border-0">
-            <CardContent>
-              <Gift className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">No items found</h3>
-              <p className="text-gray-500 mb-6">Try adjusting your search or filter criteria</p>
-              <Button onClick={() => {
-                setSearchTerm('');
-                setSelectedCategory('All Categories');
-              }}>
-                Clear Filters
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );
