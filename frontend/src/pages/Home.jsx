@@ -1,48 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { Card, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
-import { Gift, Search, Filter, Star, Calendar, Package } from 'lucide-react';
-import WishlistCard from '../components/WishlistCard';
-import AddWishlistItem from '../components/AddWishlistItem';
-import { wishlistItems as mockWishlistItems, categories } from '../mock/wishlist-data';
+import { Gift, Star, DollarSign } from 'lucide-react';
+import { wishlistItems } from '../mock/wishlist-data';
 
 const Home = () => {
-  const [wishlistItems, setWishlistItems] = useState(mockWishlistItems);
-  const [selectedCategory, setSelectedCategory] = useState('All Categories');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showAddForm, setShowAddForm] = useState(false);
-
-  const filteredItems = useMemo(() => {
-    return wishlistItems.filter(item => {
-      const matchesCategory = selectedCategory === 'All Categories' || item.category === selectedCategory;
-      const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           item.description.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
-  }, [wishlistItems, selectedCategory, searchTerm]);
-
-  const stats = useMemo(() => {
-    const total = wishlistItems.length;
-    const purchased = wishlistItems.filter(item => item.purchased).length;
-    const totalValue = wishlistItems.reduce((sum, item) => sum + item.price, 0);
-    const remaining = total - purchased;
-    
-    return { total, purchased, remaining, totalValue };
-  }, [wishlistItems]);
-
-  const handleAddItem = (newItem) => {
-    setWishlistItems(prev => [newItem, ...prev]);
-  };
-
-  const handleTogglePurchased = (itemId) => {
-    setWishlistItems(prev => 
-      prev.map(item => 
-        item.id === itemId ? { ...item, purchased: !item.purchased } : item
-      )
-    );
+  const priorityColors = {
+    High: 'bg-red-100 text-red-800 border-red-200',
+    Medium: 'bg-yellow-100 text-yellow-800 border-yellow-200', 
+    Low: 'bg-green-100 text-green-800 border-green-200'
   };
 
   return (
